@@ -8,6 +8,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 //use my sql module
 const mysql = require('mysql');
+const { throws } = require('assert');
 // const { createConnection } = require('net');
 
 //create an express seerver
@@ -54,8 +55,18 @@ app.get('/',(req, res) => {
         });
 });
 
+
+// add user route
+app.get('/user/add',(req, res) => {
+    res.render('add_user', {
+        title: "Adding users"
+    });
+    console.log("add block working")
+});
+
+
 //getting users by id
-app.get('/:id', (req, res)=> {
+app.get('/user/:id', (req, res)=> {
     let id = req.params.id; 
     let qry = "SELECT * FROM users WHERE  id = ?";
     conn.query(qry, id, (err, rows, fields) => {
@@ -66,40 +77,30 @@ app.get('/:id', (req, res)=> {
     });
 });
 
-// add user route
-app.get('/add',(req, res) => {
-    res.render('add_user', {
-        title: "Adding users"
-    });
-    });
-
 //inserting data into db
-app.post('', (req, res) => {
+app.post('/user/save', (req, res) => {
     let reqBody = req.body;
     let data = { name: reqBody.name, description: reqBody.description, email: reqBody.email, contact_no: reqBody.contact_no }
     let qry = "INSERT INTO users SET ?";
     conn.query(qry, data, (err, rows, fields) => {
-        if(!err){
-            res.send(data);
-            console.log("rows have been added")
-        }
-    })
+       if(err) throw err;
+       res.redirect('/');
+    });
 });
 
 //deleting data using id
-app.delete('/:id', (req, res) => {
+app.delete('/user/:id', (req, res) => {
     let id = req.params.id; 
-    let qry = "DELETE FROM users WHERE id = ?";
+    console.log(id)
+    let qry = `DELETE FROM users where id = ${id}`;
     conn.query(qry, id, (err, rows, fields) => {
-        if(!err){
-            res.send(`row has been deleted with id:  ${id}`);
-            console.log("rows have been deleted")
-        }
+        if(err) throw err;
+        res.redirect('/');
     })
 });
 
 //updating data using id
-app.put('/:id', (req, res) => {
+app.put('/update/:id', (req, res) => {
     let qry = 'UPDATE users SET ? WHERE ?'
     conn.query(qry, [req.body, req.params], (err, rows, fields) => {
         if(!err){

@@ -39,14 +39,14 @@
                             <td><%= user.email %></td>
                             <td><%= user.contact_no %></td>
                             <td>
-                                <a href=" " class="btn btn-sm btn-primary">Edit</a>
-                                <a href=" " class="btn btn-sm btn-danger">Delete</a>
+                                <a href="" class="btn btn-sm btn-primary">Edit</a>
+                                <a href="user/<%= user.id %>" class="btn btn-sm btn-danger">Delete</a>
                             </td>
                         </tr>
                      <% }); %>
                   </tbody>
                 </table><br/><br/>
-                <a href="/add" class="btn btn-sm btn-primary">Add User</a>
+                <a href="/user/add" class="btn btn-sm btn-primary">Add User</a>
             </div>
         </section>
 
