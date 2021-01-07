@@ -1,24 +1,28 @@
 //use path module
 const path = require('path');
+// set ejs as engine
+const ejs = require('ejs');
 //use express module
 const express = require('express');
 //use body parser module
 const bodyParser = require('body-parser');
 //use my sql module
 const mysql = require('mysql');
-const { createConnection } = require('net');
+// const { createConnection } = require('net');
 
 //create an express seerver
 const app = express();
 //create/ define port number
 const port = process.env.PORT || 4000;
 
-// //set the client/views and body parser
-// app.set('views',path.join(__dirname, 'client'));
+//set the views 
+app.set('views',path.join(__dirname, '../views'));
+//set view engine
+app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 //set assests folder as static folder for static file
-// app.use('/assets',express.static(__dirname + '/assests'));
+app.use(express.static("public"));
 
 //create connection
 const conn = mysql.createConnection({
@@ -36,11 +40,15 @@ conn.connect((err) => {
 });
 
 //route for get all data
-app.get('',(req, res) => {
+app.get('/',(req, res) => {
     let qry = "SELECT * FROM users";
         conn.query(qry, (err, rows, fields) => {
           if (!err){
-            res.send(rows);
+            // res.send(rows);
+            //render to home Page
+            res.render('homePage', {
+                rows:rows
+            });
             console.log(rows);
           }
         });
@@ -57,6 +65,13 @@ app.get('/:id', (req, res)=> {
       }
     });
 });
+
+// add user route
+app.get('/add',(req, res) => {
+    res.render('add_user', {
+        title: "Adding users"
+    });
+    });
 
 //inserting data into db
 app.post('', (req, res) => {
